@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Badge from '$lib/components/ui/Badge.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -14,43 +16,34 @@
 </svelte:head>
 
 <div class="mb-6 flex items-center justify-between">
-	<h1 class="text-xl font-semibold text-ink-950">Artikel</h1>
-	<a
-		href="/admin/articles/new"
-		class="rounded-md bg-ink-950 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-	>
-		+ Artikel baru
-	</a>
+	<h1 class="text-xl font-semibold text-ink-950 dark:text-white">Artikel</h1>
+	<Button href="/admin/articles/new">+ Artikel baru</Button>
 </div>
 
-<div class="overflow-hidden rounded-xl border border-ink-900/10 bg-white">
-	<table class="w-full text-left text-sm">
-		<thead class="border-b border-ink-900/10 text-ink-500">
+<div class="overflow-x-auto rounded-xl border border-ink-900/10 dark:border-white/10">
+	<table class="min-w-full divide-y divide-ink-900/10 text-left text-sm dark:divide-white/10">
+		<thead class="bg-white text-ink-500 dark:bg-ink-900 dark:text-white/50">
 			<tr>
-				<th class="px-4 py-3 font-medium">Judul</th>
-				<th class="px-4 py-3 font-medium">Status</th>
-				<th class="px-4 py-3 font-medium">Views</th>
-				<th class="px-4 py-3 font-medium">Diperbarui</th>
+				<th class="whitespace-nowrap px-4 py-3 font-medium">Judul</th>
+				<th class="whitespace-nowrap px-4 py-3 font-medium">Status</th>
+				<th class="whitespace-nowrap px-4 py-3 font-medium">Views</th>
+				<th class="whitespace-nowrap px-4 py-3 font-medium">Diperbarui</th>
 				<th class="px-4 py-3"></th>
 			</tr>
 		</thead>
-		<tbody class="divide-y divide-ink-900/5">
+		<tbody class="divide-y divide-ink-900/5 bg-white dark:divide-white/5 dark:bg-ink-900">
 			{#each data.articles as article (article.id)}
 				<tr>
-					<td class="max-w-xs truncate px-4 py-3">{article.title}</td>
+					<td class="max-w-xs truncate px-4 py-3 text-ink-900 dark:text-white">{article.title}</td>
 					<td class="px-4 py-3">
-						<span
-							class="rounded-full px-2 py-0.5 text-xs {article.status === 'published'
-								? 'bg-green-100 text-green-700'
-								: 'bg-ink-900/5 text-ink-500'}"
-						>
+						<Badge tone={article.status === 'published' ? 'success' : 'neutral'}>
 							{article.status === 'published' ? 'Published' : 'Draft'}
-						</span>
+						</Badge>
 					</td>
-					<td class="px-4 py-3 text-ink-500">{article.views}</td>
-					<td class="px-4 py-3 text-ink-500">{formatDate(article.createdAt)}</td>
+					<td class="px-4 py-3 text-ink-500 dark:text-white/50">{article.views}</td>
+					<td class="px-4 py-3 text-ink-500 dark:text-white/50">{formatDate(article.createdAt)}</td>
 					<td class="px-4 py-3 text-right">
-						<div class="flex justify-end gap-2">
+						<div class="flex justify-end gap-3">
 							<a href={`/admin/articles/${article.id}`} class="text-accent hover:underline">Edit</a>
 							<form
 								method="POST"
@@ -60,14 +53,18 @@
 								}}
 							>
 								<input type="hidden" name="id" value={article.id} />
-								<button type="submit" class="text-red-600 hover:underline">Hapus</button>
+								<button type="submit" class="text-red-600 hover:underline dark:text-red-400">
+									Hapus
+								</button>
 							</form>
 						</div>
 					</td>
 				</tr>
 			{:else}
 				<tr>
-					<td colspan="5" class="px-4 py-8 text-center text-ink-500">Belum ada artikel.</td>
+					<td colspan="5" class="px-4 py-8 text-center text-ink-500 dark:text-white/50">
+						Belum ada artikel.
+					</td>
 				</tr>
 			{/each}
 		</tbody>

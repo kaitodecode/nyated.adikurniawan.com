@@ -23,30 +23,30 @@
 {#if isLoginPage}
 	{@render children()}
 {:else}
-	<div class="flex min-h-screen bg-paper">
-		<aside class="w-56 shrink-0 border-r border-ink-900/10 bg-white">
-			<div class="border-b border-ink-900/10 px-5 py-4">
-				<span class="font-semibold text-ink-950">nyated. admin</span>
+	<div class="flex min-h-screen bg-paper dark:bg-ink-950">
+		<aside class="flex w-56 shrink-0 flex-col border-r border-ink-900/10 bg-white dark:border-white/10 dark:bg-ink-900">
+			<div class="border-b border-ink-900/10 px-5 py-4 dark:border-white/10">
+				<span class="font-semibold text-ink-950 dark:text-white">nyated. admin</span>
 			</div>
 			<nav class="flex flex-col gap-1 p-3">
 				{#each links as link (link.href)}
 					<a
 						href={link.href}
-						class="rounded-md px-3 py-2 text-sm hover:bg-ink-900/5 {page.url.pathname.startsWith(
+						class="rounded-md px-3 py-2 text-sm hover:bg-ink-900/5 dark:hover:bg-white/10 {page.url.pathname.startsWith(
 							link.href
 						)
-							? 'bg-ink-900/5 font-medium text-ink-950'
-							: 'text-ink-700'}"
+							? 'bg-ink-900/5 font-medium text-ink-950 dark:bg-white/10 dark:text-white'
+							: 'text-ink-700 dark:text-white/60'}"
 					>
 						{link.label}
 					</a>
 				{/each}
 			</nav>
-			<div class="mt-auto border-t border-ink-900/10 p-3">
-				<p class="truncate px-3 py-1 text-xs text-ink-500">{data.user?.email}</p>
+			<div class="mt-auto border-t border-ink-900/10 p-3 dark:border-white/10">
+				<p class="truncate px-3 py-1 text-xs text-ink-500 dark:text-white/40">{data.user?.email}</p>
 				<button
 					onclick={handleLogout}
-					class="w-full rounded-md px-3 py-2 text-left text-sm text-ink-700 hover:bg-ink-900/5"
+					class="w-full rounded-md px-3 py-2 text-left text-sm text-ink-700 hover:bg-ink-900/5 dark:text-white/60 dark:hover:bg-white/10"
 				>
 					Keluar
 				</button>
