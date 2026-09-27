@@ -1,16 +1,18 @@
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import { PUBLIC_ADSENSE_CLIENT_ID } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 
 	let { children } = $props();
+
+	const adsenseClientId = env.PUBLIC_ADSENSE_CLIENT_ID ?? '';
 </script>
 
 <svelte:head>
-	{#if PUBLIC_ADSENSE_CLIENT_ID}
+	{#if adsenseClientId}
 		<script
 			async
-			src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUBLIC_ADSENSE_CLIENT_ID}`}
+			src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
 			crossorigin="anonymous"
 		></script>
 	{/if}

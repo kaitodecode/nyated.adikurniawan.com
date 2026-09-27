@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { PUBLIC_ADSENSE_CLIENT_ID } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
+
+	const PUBLIC_ADSENSE_CLIENT_ID = env.PUBLIC_ADSENSE_CLIENT_ID ?? '';
 
 	interface Props {
 		slot?: string;

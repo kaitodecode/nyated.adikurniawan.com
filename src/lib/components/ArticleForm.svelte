@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import MarkdownEditor from './MarkdownEditor.svelte';
-	import { uploadArticleImage } from '$lib/firebase/storage';
+	import { uploadArticleImage } from '$lib/supabase/storage';
 	import type { ArticleStatus } from '$lib/types/article';
 
 	interface Props {
