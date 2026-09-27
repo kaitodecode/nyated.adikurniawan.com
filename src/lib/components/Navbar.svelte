@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import ThemeToggle from './ThemeToggle.svelte';
+	import Menu from '@lucide/svelte/icons/menu';
+	import X from '@lucide/svelte/icons/x';
 
 	const links = [
 		{ href: '/', label: 'Beranda' },
@@ -9,60 +12,58 @@
 	let mobileOpen = $state(false);
 </script>
 
-<header class="border-b border-ink-900/10 bg-paper/90 backdrop-blur dark:border-white/10 dark:bg-ink-950/90">
+<header
+	class="sticky top-0 z-40 border-b border-ink-900/10 bg-paper/80 backdrop-blur-md dark:border-white/10 dark:bg-ink-950/80"
+>
 	<div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
-		<a href="/" class="text-lg font-semibold tracking-tight text-ink-950 dark:text-white">
+		<a href="/" class="text-lg font-semibold tracking-tighter-heading text-ink-950 dark:text-white">
 			nyated.
 		</a>
 
-		<nav class="hidden items-center gap-5 text-sm text-ink-700 md:flex dark:text-white/70">
-			{#each links as link (link.href)}
-				<a
-					href={link.href}
-					class="transition-colors hover:text-ink-950 dark:hover:text-white"
-					class:text-ink-950={page.url.pathname === link.href}
-					class:dark:text-white={page.url.pathname === link.href}
-					class:font-medium={page.url.pathname === link.href}
-				>
-					{link.label}
-				</a>
-			{/each}
-		</nav>
+		<div class="flex items-center gap-1">
+			<nav class="hidden items-center gap-6 text-sm text-ink-600 md:flex dark:text-ink-200">
+				{#each links as link (link.href)}
+					<a
+						href={link.href}
+						class="transition-colors hover:text-ink-950 dark:hover:text-white"
+						class:text-ink-950={page.url.pathname === link.href}
+						class:dark:text-white={page.url.pathname === link.href}
+						class:font-medium={page.url.pathname === link.href}
+					>
+						{link.label}
+					</a>
+				{/each}
+			</nav>
 
-		<button
-			type="button"
-			onclick={() => (mobileOpen = !mobileOpen)}
-			aria-label="Buka menu"
-			aria-expanded={mobileOpen}
-			class="inline-flex items-center justify-center rounded-md p-2 text-ink-700 hover:bg-ink-900/5 md:hidden dark:text-white/70 dark:hover:bg-white/10"
-		>
-			<svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 20 20" fill="currentColor">
+			<div class="mx-1 hidden h-5 w-px bg-ink-900/10 md:block dark:bg-white/10"></div>
+
+			<ThemeToggle />
+
+			<button
+				type="button"
+				onclick={() => (mobileOpen = !mobileOpen)}
+				aria-label="Buka menu"
+				aria-expanded={mobileOpen}
+				class="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 hover:bg-ink-900/5 md:hidden dark:text-ink-200 dark:hover:bg-white/10"
+			>
 				{#if mobileOpen}
-					<path
-						fill-rule="evenodd"
-						d="M14.707 5.293a1 1 0 010 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 011.414-1.414L10 8.586l3.293-3.293a1 1 0 011.414 0z"
-						clip-rule="evenodd"
-					/>
+					<X class="size-4" />
 				{:else}
-					<path
-						fill-rule="evenodd"
-						d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-						clip-rule="evenodd"
-					/>
+					<Menu class="size-4" />
 				{/if}
-			</svg>
-		</button>
+			</button>
+		</div>
 	</div>
 
 	{#if mobileOpen}
 		<nav
-			class="flex flex-col gap-1 border-t border-ink-900/10 px-4 py-3 text-sm text-ink-700 md:hidden dark:border-white/10 dark:text-white/70"
+			class="flex flex-col gap-1 border-t border-ink-900/10 px-4 py-3 text-sm text-ink-600 md:hidden dark:border-white/10 dark:text-ink-200"
 		>
 			{#each links as link (link.href)}
 				<a
 					href={link.href}
 					onclick={() => (mobileOpen = false)}
-					class="rounded-md px-2 py-2 hover:bg-ink-900/5 dark:hover:bg-white/10"
+					class="rounded-lg px-2 py-2 hover:bg-ink-900/5 dark:hover:bg-white/10"
 					class:text-ink-950={page.url.pathname === link.href}
 					class:dark:text-white={page.url.pathname === link.href}
 					class:font-medium={page.url.pathname === link.href}

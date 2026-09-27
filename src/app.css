@@ -1,20 +1,43 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
 @plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
 	--font-sans:
-		'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-	--color-ink-950: #0f1115;
-	--color-ink-900: #16181d;
-	--color-ink-700: #3a3f4a;
+		'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+		sans-serif;
+
+	--color-ink-950: #0b0d11;
+	--color-ink-900: #14161b;
+	--color-ink-800: #1e2128;
+	--color-ink-700: #383c46;
+	--color-ink-600: #545966;
 	--color-ink-500: #6b7280;
-	--color-paper: #fafafa;
-	--color-accent: #2563eb;
+	--color-ink-400: #8b909c;
+	--color-ink-200: #d8dade;
+	--color-ink-100: #eceef1;
+	--color-paper: #fafaf9;
+
+	--color-accent: #4338ca;
+	--color-accent-dark: #6366f1;
+	--color-accent-muted: color-mix(in srgb, var(--color-accent) 10%, transparent);
+
+	--color-success: #15803d;
+	--color-success-muted: color-mix(in srgb, var(--color-success) 12%, transparent);
+	--color-warning: #b45309;
+	--color-warning-muted: color-mix(in srgb, var(--color-warning) 14%, transparent);
+	--color-danger: #b91c1c;
+	--color-danger-muted: color-mix(in srgb, var(--color-danger) 12%, transparent);
 }
 
 @layer base {
 	html {
 		font-family: var(--font-sans);
+		font-feature-settings: 'tnum' 1, 'cv11' 1;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
 	}
 
 	body {
@@ -27,10 +50,19 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		body {
+		html:not(.dark):not(.light) body {
 			background-color: var(--color-ink-950);
 			color: var(--color-paper);
 		}
+	}
+
+	.dark body {
+		background-color: var(--color-ink-950);
+		color: var(--color-paper);
+	}
+
+	.dark {
+		--color-accent: var(--color-accent-dark);
 	}
 }
 
@@ -38,4 +70,41 @@
 	.prose-article {
 		max-width: 68ch;
 	}
+
+	.tracking-tighter-heading {
+		letter-spacing: -0.03em;
+	}
+
+	.ad-slot {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.ad-slot--sidebar {
+		min-height: 250px;
+		width: 100%;
+	}
+
+	.ad-slot--in-content {
+		min-height: 120px;
+		width: 100%;
+	}
+
+	.ad-slot--footer {
+		min-height: 90px;
+		width: 100%;
+	}
+}
+
+.prose-article blockquote {
+	border-left-width: 3px;
+	border-color: var(--color-accent);
+	font-style: italic;
+	color: var(--color-ink-700);
+}
+
+.dark .prose-article blockquote {
+	color: var(--color-ink-200);
 }

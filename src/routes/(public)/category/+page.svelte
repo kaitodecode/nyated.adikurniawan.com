@@ -11,12 +11,12 @@
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-	<h1 class="mb-8 text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl dark:text-white">
+	<h1 class="mb-8 text-2xl font-bold tracking-tighter-heading text-ink-950 sm:text-3xl dark:text-white">
 		Kategori
 	</h1>
 
 	{#if data.tags.length === 0}
-		<p class="text-ink-500 dark:text-white/50">Belum ada kategori.</p>
+		<p class="text-ink-500 dark:text-ink-400">Belum ada kategori.</p>
 	{:else}
 		<div class="flex flex-wrap gap-2">
 			{#each data.tags as tag (tag)}

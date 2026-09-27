@@ -41,10 +41,12 @@
 	<div class="grid gap-10 lg:grid-cols-[1fr_260px]">
 		<div class="min-w-0">
 			<header class="mb-8">
-				<h1 class="text-3xl font-bold leading-tight tracking-tight text-ink-950 sm:text-4xl dark:text-white">
+				<h1
+					class="text-3xl leading-tight font-bold tracking-tighter-heading text-ink-950 sm:text-4xl dark:text-white"
+				>
 					{article.title}
 				</h1>
-				<div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500 dark:text-white/50">
+				<div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500 dark:text-ink-400">
 					<span>{article.authorName}</span>
 					<span aria-hidden="true">&middot;</span>
 					<time datetime={new Date(article.publishedAt ?? article.createdAt).toISOString()}>
@@ -76,7 +78,9 @@
 
 			{#if data.related.length}
 				<section class="mt-14 border-t border-ink-900/10 pt-8 dark:border-white/10">
-					<h2 class="mb-6 text-lg font-semibold text-ink-950 dark:text-white">Artikel terkait</h2>
+					<h2 class="mb-6 text-lg font-semibold tracking-tight text-ink-950 dark:text-white">
+						Artikel terkait
+					</h2>
 					<div class="grid gap-x-8 gap-y-8 sm:grid-cols-2">
 						{#each data.related as related (related.id)}
 							<ArticleCard article={related} />
@@ -87,7 +91,7 @@
 		</div>
 
 		<aside class="hidden lg:block">
-			<div class="sticky top-6">
+			<div class="sticky top-20">
 				<AdSlot layout="sidebar" />
 			</div>
 		</aside>

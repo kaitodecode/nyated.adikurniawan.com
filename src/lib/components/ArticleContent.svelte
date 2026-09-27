@@ -24,7 +24,7 @@
 </script>
 
 <div
-	class="prose prose-article prose-neutral max-w-none prose-headings:font-semibold prose-a:text-accent dark:prose-invert"
+	class="prose prose-article prose-neutral max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline dark:prose-invert"
 >
 	{#each blocks as block, i (i)}
 		{@html block}

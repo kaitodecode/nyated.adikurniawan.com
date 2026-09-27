@@ -37,10 +37,17 @@
 <div class="flex min-h-screen items-center justify-center bg-paper px-4 dark:bg-ink-950">
 	<form
 		onsubmit={handleSubmit}
-		class="w-full max-w-sm rounded-xl border border-ink-900/10 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-900"
+		class="w-full max-w-sm rounded-xl border border-ink-900/10 bg-white p-8 shadow-[0_16px_40px_-24px_rgba(15,17,21,0.25)] dark:border-white/10 dark:bg-ink-900"
 	>
-		<h1 class="mb-1 text-xl font-semibold text-ink-950 dark:text-white">Admin Login</h1>
-		<p class="mb-6 text-sm text-ink-500 dark:text-white/50">Masuk untuk mengelola artikel.</p>
+		<span
+			class="mb-4 inline-flex size-9 items-center justify-center rounded-lg bg-ink-950 text-sm font-semibold text-white dark:bg-white dark:text-ink-950"
+		>
+			n
+		</span>
+		<h1 class="mb-1 text-xl font-semibold tracking-tight text-ink-950 dark:text-white">
+			Admin Login
+		</h1>
+		<p class="mb-6 text-sm text-ink-500 dark:text-ink-400">Masuk untuk mengelola artikel.</p>
 
 		{#if error}
 			<Alert tone="error" class="mb-4">{error}</Alert>

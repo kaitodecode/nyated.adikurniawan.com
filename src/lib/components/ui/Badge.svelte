@@ -14,11 +14,11 @@
 
 	const tones: Record<Tone, string> = {
 		neutral:
-			'bg-ink-900/5 text-ink-700 hover:bg-ink-900/10 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/15',
-		success: 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400',
-		warning: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-		danger: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
-		accent: 'bg-accent/10 text-accent dark:bg-accent/20'
+			'bg-ink-900/5 text-ink-600 hover:bg-ink-900/10 dark:bg-white/10 dark:text-ink-200 dark:hover:bg-white/15',
+		success: 'bg-success-muted text-success',
+		warning: 'bg-warning-muted text-warning',
+		danger: 'bg-danger-muted text-danger',
+		accent: 'bg-accent-muted text-accent'
 	};
 
 	const base = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition';

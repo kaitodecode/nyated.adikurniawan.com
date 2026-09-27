@@ -6,6 +6,6 @@
 	<title>Artikel baru — Admin</title>
 </svelte:head>
 
-<h1 class="mb-6 text-xl font-semibold text-ink-950 dark:text-white">Artikel baru</h1>
+<h1 class="mb-6 text-xl font-semibold tracking-tight text-ink-950 dark:text-white">Artikel baru</h1>
 
 <ArticleForm submitLabel="Publikasikan" />
