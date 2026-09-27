@@ -1,13 +1,13 @@
 # nyated. — Self-hosted article CMS
 
-Full-stack article/blog platform built with **SvelteKit** and **Supabase** (Auth, Postgres, Storage), deployed on **Cloudflare Pages**.
+Full-stack article/blog platform built with **SvelteKit** and **Supabase** (Auth, Postgres, Storage), deployed on **Cloudflare Workers**.
 
 ## Stack
 
 - **Frontend**: SvelteKit 2 + Svelte 5 (runes), Tailwind CSS v4, `marked` for Markdown rendering.
 - **Auth**: Supabase Auth (email/password) for a single-admin CMS. Any signed-in account is treated as admin — only create accounts for people you trust.
 - **Data**: Supabase Postgres (`articles`, `daily_stats` tables, RLS-protected) + Supabase Storage (cover images / in-content images).
-- **Deployment**: `@sveltejs/adapter-cloudflare` — everything (SSR pages + API routes) runs as a Cloudflare Pages Worker. Supabase's client is REST/fetch-based, so it works natively on the Workers runtime (no Node-only APIs required, unlike `firebase-admin`/gRPC).
+- **Deployment**: `@sveltejs/adapter-cloudflare` + `wrangler.jsonc` — everything (SSR pages + API routes) runs as a Cloudflare Worker, deployed via [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/) (Git-connected CI/CD). Supabase's client is REST/fetch-based, so it works natively on the Workers runtime (no Node-only APIs required, unlike `firebase-admin`/gRPC).
 - **Ads**: Google AdSense placeholder slots (sidebar, in-content, footer) — activate by setting `PUBLIC_ADSENSE_CLIENT_ID`.
 
 ## Project structure
@@ -24,6 +24,7 @@ src/
     components/            # ArticleCard, AdSlot, MarkdownEditor, LineChart, ...
     types/, utils/
 supabase/schema.sql        # tables, RLS policies, storage bucket + policies, view-count RPC
+wrangler.jsonc              # Cloudflare Worker config (name, entry, static assets)
 ```
 
 ## Setup
@@ -45,16 +46,20 @@ supabase/schema.sql        # tables, RLS policies, storage bucket + policies, vi
    ```
 6. Visit `/admin/login` and sign in with the admin account you created in step 3.
 
-## Deploying to Cloudflare Pages
+## Deploying to Cloudflare Workers
 
-1. Push this repo to GitHub/GitLab and connect it in the Cloudflare Pages dashboard, **or** deploy directly with Wrangler:
-   ```sh
-   npm run build
-   npx wrangler pages deploy .svelte-kit/cloudflare
-   ```
-2. Framework preset: **SvelteKit** — build command `npm run build`, build output directory `.svelte-kit/cloudflare` (both auto-filled by the preset).
-3. Add the same environment variables from `.env` in Pages → Settings → Environment variables (Production and Preview).
-4. If any dependency ever complains about a missing Node API at runtime, enable the **`nodejs_compat`** compatibility flag in Pages → Settings → Functions — this project doesn't need it today (all server-side deps are fetch/pure-JS), but it's a one-click fix if a future package needs it.
+`wrangler.jsonc` at the repo root configures the Worker (name `nyated`, entry point, static assets directory, `nodejs_compat` flag). Two ways to deploy:
+
+- **Workers Builds (Git-connected CI/CD)**: connect this repo in the Cloudflare dashboard under Workers & Pages → your worker → Settings → Builds. Build command `npm run build`; `wrangler.jsonc` tells it what to deploy — no extra build-output-directory setting needed.
+- **Manual deploy**:
+  ```sh
+  npm run build
+  npx wrangler deploy
+  ```
+
+Either way, add the environment variables from `.env` under your Worker's Settings → Variables (Production and, if used, Preview environments).
+
+If any dependency ever complains about a missing Node API at runtime, `nodejs_compat` is already enabled in `wrangler.jsonc` — this project doesn't strictly need it today (all server-side deps are fetch/pure-JS), but it's there as a safety net.
 
 ## Notes
 
