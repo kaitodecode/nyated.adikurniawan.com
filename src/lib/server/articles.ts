@@ -1,33 +1,30 @@
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
-import { adminDb } from './firebase-admin';
-import type { Article, ArticleListItem } from '$lib/types/article';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '$lib/supabase/types';
+import type { Article, ArticleListItem, ArticleStatus } from '$lib/types/article';
 import { slugify, excerptFromMarkdown } from '$lib/utils/slug';
 
-const COLLECTION = 'articles';
+type DB = SupabaseClient<Database>;
+type ArticleRow = Database['public']['Tables']['articles']['Row'];
 
-function toMillis(value: unknown): number | null {
-	if (value instanceof Timestamp) return value.toMillis();
-	if (typeof value === 'number') return value;
-	return null;
-}
+const COLUMNS =
+	'id, title, slug, content, excerpt, cover_image, tags, status, author_id, author_name, views, created_at, updated_at, published_at';
 
-function docToArticle(doc: FirebaseFirestore.DocumentSnapshot): Article {
-	const data = doc.data() ?? {};
+function rowToArticle(row: ArticleRow): Article {
 	return {
-		id: doc.id,
-		title: data.title ?? '',
-		slug: data.slug ?? doc.id,
-		content: data.content ?? '',
-		excerpt: data.excerpt ?? '',
-		coverImage: data.coverImage ?? null,
-		tags: data.tags ?? [],
-		status: data.status ?? 'draft',
-		authorId: data.authorId ?? '',
-		authorName: data.authorName ?? '',
-		views: data.views ?? 0,
-		createdAt: toMillis(data.createdAt) ?? Date.now(),
-		updatedAt: toMillis(data.updatedAt) ?? Date.now(),
-		publishedAt: toMillis(data.publishedAt)
+		id: row.id,
+		title: row.title,
+		slug: row.slug,
+		content: row.content,
+		excerpt: row.excerpt,
+		coverImage: row.cover_image,
+		tags: row.tags ?? [],
+		status: row.status,
+		authorId: row.author_id ?? '',
+		authorName: row.author_name,
+		views: row.views,
+		createdAt: new Date(row.created_at).getTime(),
+		updatedAt: new Date(row.updated_at).getTime(),
+		publishedAt: row.published_at ? new Date(row.published_at).getTime() : null
 	};
 }
 
@@ -40,88 +37,97 @@ export interface PaginatedArticles {
 }
 
 export async function getPublishedArticles(
+	supabase: DB,
 	page = 1,
 	perPage = 9,
 	tag?: string
 ): Promise<PaginatedArticles> {
-	let query: FirebaseFirestore.Query = adminDb.collection(COLLECTION).where('status', '==', 'published');
-	if (tag) query = query.where('tags', 'array-contains', tag);
+	const from = (page - 1) * perPage;
+	const to = from + perPage - 1;
 
-	const snapshot = await query.get();
-	const all = snapshot.docs
-		.map(docToArticle)
-		.sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt));
+	let query = supabase
+		.from('articles')
+		.select(COLUMNS, { count: 'exact' })
+		.eq('status', 'published')
+		.order('published_at', { ascending: false, nullsFirst: false })
+		.range(from, to);
 
-	const total = all.length;
-	const totalPages = Math.max(1, Math.ceil(total / perPage));
-	const start = (page - 1) * perPage;
-	const items = all.slice(start, start + perPage);
+	if (tag) query = query.contains('tags', [tag]);
 
-	return { items, total, page, perPage, totalPages };
+	const { data, error, count } = await query;
+	if (error) throw new Error(error.message);
+
+	const total = count ?? 0;
+	return {
+		items: (data ?? []).map(rowToArticle),
+		total,
+		page,
+		perPage,
+		totalPages: Math.max(1, Math.ceil(total / perPage))
+	};
 }
 
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
-	const snapshot = await adminDb
-		.collection(COLLECTION)
-		.where('slug', '==', slug)
-		.where('status', '==', 'published')
-		.limit(1)
-		.get();
+export async function getArticleBySlug(supabase: DB, slug: string): Promise<Article | null> {
+	const { data, error } = await supabase
+		.from('articles')
+		.select(COLUMNS)
+		.eq('slug', slug)
+		.eq('status', 'published')
+		.maybeSingle();
 
-	if (snapshot.empty) return null;
-	return docToArticle(snapshot.docs[0]);
+	if (error) throw new Error(error.message);
+	return data ? rowToArticle(data) : null;
 }
 
-export async function getRelatedArticles(article: Article, max = 3): Promise<ArticleListItem[]> {
+export async function getRelatedArticles(
+	supabase: DB,
+	article: Article,
+	max = 3
+): Promise<ArticleListItem[]> {
 	if (!article.tags.length) return [];
 
-	const snapshot = await adminDb
-		.collection(COLLECTION)
-		.where('status', '==', 'published')
-		.where('tags', 'array-contains-any', article.tags.slice(0, 10))
-		.limit(max + 1)
-		.get();
+	const { data, error } = await supabase
+		.from('articles')
+		.select(COLUMNS)
+		.eq('status', 'published')
+		.overlaps('tags', article.tags)
+		.neq('id', article.id)
+		.limit(max);
 
-	return snapshot.docs
-		.map(docToArticle)
-		.filter((a) => a.id !== article.id)
-		.slice(0, max);
+	if (error) throw new Error(error.message);
+	return (data ?? []).map(rowToArticle);
 }
 
-export async function getAllTags(): Promise<string[]> {
-	const snapshot = await adminDb.collection(COLLECTION).where('status', '==', 'published').get();
+export async function getAllTags(supabase: DB): Promise<string[]> {
+	const { data, error } = await supabase.from('articles').select('tags').eq('status', 'published');
+	if (error) throw new Error(error.message);
+
 	const tags = new Set<string>();
-	snapshot.docs.forEach((doc) => {
-		(doc.data().tags ?? []).forEach((t: string) => tags.add(t));
-	});
+	(data ?? []).forEach((row) => (row.tags ?? []).forEach((t) => tags.add(t)));
 	return Array.from(tags).sort();
 }
 
-export async function incrementArticleViews(id: string): Promise<void> {
-	await adminDb
-		.collection(COLLECTION)
-		.doc(id)
-		.update({ views: FieldValue.increment(1) });
-
-	const today = new Date().toISOString().slice(0, 10);
-	await adminDb
-		.collection('dailyStats')
-		.doc(today)
-		.set({ views: FieldValue.increment(1), date: today }, { merge: true });
+export async function incrementArticleViews(supabase: DB, id: string): Promise<void> {
+	const { error } = await supabase.rpc('increment_article_views', { p_article_id: id });
+	if (error) console.error('Failed to record view', error.message);
 }
 
 // ---------- Admin CRUD ----------
 
-export async function listAllArticles(): Promise<ArticleListItem[]> {
-	const snapshot = await adminDb.collection(COLLECTION).get();
-	return snapshot.docs
-		.map(docToArticle)
-		.sort((a, b) => b.updatedAt - a.updatedAt);
+export async function listAllArticles(supabase: DB): Promise<ArticleListItem[]> {
+	const { data, error } = await supabase
+		.from('articles')
+		.select(COLUMNS)
+		.order('updated_at', { ascending: false });
+
+	if (error) throw new Error(error.message);
+	return (data ?? []).map(rowToArticle);
 }
 
-export async function getArticleById(id: string): Promise<Article | null> {
-	const doc = await adminDb.collection(COLLECTION).doc(id).get();
-	return doc.exists ? docToArticle(doc) : null;
+export async function getArticleById(supabase: DB, id: string): Promise<Article | null> {
+	const { data, error } = await supabase.from('articles').select(COLUMNS).eq('id', id).maybeSingle();
+	if (error) throw new Error(error.message);
+	return data ? rowToArticle(data) : null;
 }
 
 export interface ArticleInput {
@@ -129,72 +135,85 @@ export interface ArticleInput {
 	content: string;
 	tags: string[];
 	coverImage: string | null;
-	status: 'draft' | 'published';
+	status: ArticleStatus;
 }
 
 export async function createArticle(
+	supabase: DB,
 	input: ArticleInput,
-	author: { uid: string; email: string | null }
+	author: { id: string; email: string | null }
 ): Promise<string> {
 	const baseSlug = slugify(input.title) || `artikel-${Date.now()}`;
-	const slug = await ensureUniqueSlug(baseSlug);
-	const now = Timestamp.now();
+	const slug = await ensureUniqueSlug(supabase, baseSlug);
+	const now = new Date().toISOString();
 
-	const docRef = await adminDb.collection(COLLECTION).add({
-		title: input.title,
-		slug,
-		content: input.content,
-		excerpt: excerptFromMarkdown(input.content),
-		coverImage: input.coverImage,
-		tags: input.tags,
-		status: input.status,
-		authorId: author.uid,
-		authorName: author.email ?? 'Admin',
-		views: 0,
-		createdAt: now,
-		updatedAt: now,
-		publishedAt: input.status === 'published' ? now : null
-	});
+	const { data, error } = await supabase
+		.from('articles')
+		.insert({
+			title: input.title,
+			slug,
+			content: input.content,
+			excerpt: excerptFromMarkdown(input.content),
+			cover_image: input.coverImage,
+			tags: input.tags,
+			status: input.status,
+			author_id: author.id,
+			author_name: author.email ?? 'Admin',
+			views: 0,
+			created_at: now,
+			updated_at: now,
+			published_at: input.status === 'published' ? now : null
+		})
+		.select('id')
+		.single();
 
-	return docRef.id;
+	if (error) throw new Error(error.message);
+	return data.id;
 }
 
-export async function updateArticle(id: string, input: ArticleInput): Promise<void> {
-	const existing = await getArticleById(id);
+export async function updateArticle(supabase: DB, id: string, input: ArticleInput): Promise<void> {
+	const existing = await getArticleById(supabase, id);
 	if (!existing) throw new Error('Article not found');
 
-	const slugChanged = slugify(input.title) !== existing.slug && slugify(existing.title) !== slugify(input.title);
-	const slug = slugChanged ? await ensureUniqueSlug(slugify(input.title) || existing.slug, id) : existing.slug;
+	const newSlugBase = slugify(input.title);
+	const slugChanged = newSlugBase && newSlugBase !== existing.slug;
+	const slug = slugChanged ? await ensureUniqueSlug(supabase, newSlugBase, id) : existing.slug;
 
 	const becamePublished = existing.status !== 'published' && input.status === 'published';
+	const now = new Date().toISOString();
 
-	await adminDb
-		.collection(COLLECTION)
-		.doc(id)
+	const { error } = await supabase
+		.from('articles')
 		.update({
 			title: input.title,
 			slug,
 			content: input.content,
 			excerpt: excerptFromMarkdown(input.content),
-			coverImage: input.coverImage,
+			cover_image: input.coverImage,
 			tags: input.tags,
 			status: input.status,
-			updatedAt: Timestamp.now(),
-			...(becamePublished ? { publishedAt: Timestamp.now() } : {})
-		});
+			updated_at: now,
+			...(becamePublished ? { published_at: now } : {})
+		})
+		.eq('id', id);
+
+	if (error) throw new Error(error.message);
 }
 
-export async function deleteArticle(id: string): Promise<void> {
-	await adminDb.collection(COLLECTION).doc(id).delete();
+export async function deleteArticle(supabase: DB, id: string): Promise<void> {
+	const { error } = await supabase.from('articles').delete().eq('id', id);
+	if (error) throw new Error(error.message);
 }
 
-async function ensureUniqueSlug(base: string, excludeId?: string): Promise<string> {
+async function ensureUniqueSlug(supabase: DB, base: string, excludeId?: string): Promise<string> {
 	let slug = base;
 	let suffix = 1;
 
 	while (true) {
-		const snapshot = await adminDb.collection(COLLECTION).where('slug', '==', slug).limit(2).get();
-		const clash = snapshot.docs.some((doc) => doc.id !== excludeId);
+		const { data, error } = await supabase.from('articles').select('id').eq('slug', slug).limit(2);
+		if (error) throw new Error(error.message);
+
+		const clash = (data ?? []).some((row) => row.id !== excludeId);
 		if (!clash) return slug;
 		suffix += 1;
 		slug = `${base}-${suffix}`;
@@ -211,22 +230,21 @@ export interface DashboardStats {
 	dailyViews: { date: string; views: number }[];
 }
 
-export async function getDashboardStats(): Promise<DashboardStats> {
-	const all = await listAllArticles();
+export async function getDashboardStats(supabase: DB): Promise<DashboardStats> {
+	const all = await listAllArticles(supabase);
 	const totalPublished = all.filter((a) => a.status === 'published').length;
 	const totalDraft = all.filter((a) => a.status === 'draft').length;
 	const totalViews = all.reduce((sum, a) => sum + (a.views ?? 0), 0);
 	const topArticles = [...all].sort((a, b) => b.views - a.views).slice(0, 5);
 
-	const statsSnapshot = await adminDb
-		.collection('dailyStats')
-		.orderBy('date', 'desc')
-		.limit(14)
-		.get();
+	const { data, error } = await supabase
+		.from('daily_stats')
+		.select('date, views')
+		.order('date', { ascending: false })
+		.limit(14);
 
-	const dailyViews = statsSnapshot.docs
-		.map((doc) => ({ date: doc.id, views: doc.data().views ?? 0 }))
-		.reverse();
+	if (error) throw new Error(error.message);
+	const dailyViews = (data ?? []).map((d) => ({ date: d.date, views: d.views })).reverse();
 
 	return { totalPublished, totalDraft, totalViews, topArticles, dailyViews };
 }

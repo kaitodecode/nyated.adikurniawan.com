@@ -2,8 +2,7 @@
 	import '../../app.css';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { signOut } from 'firebase/auth';
-	import { auth } from '$lib/firebase/client';
+	import { supabase } from '$lib/supabase/client';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: any } = $props();
@@ -14,8 +13,7 @@
 	];
 
 	async function handleLogout() {
-		await signOut(auth);
-		await fetch('/api/auth/session', { method: 'DELETE' });
+		await supabase.auth.signOut();
 		await goto('/admin/login', { invalidateAll: true });
 	}
 

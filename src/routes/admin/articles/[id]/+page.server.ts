@@ -2,8 +2,8 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getArticleById, updateArticle } from '$lib/server/articles';
 
-export const load: PageServerLoad = async ({ params }) => {
-	const article = await getArticleById(params.id);
+export const load: PageServerLoad = async ({ params, locals }) => {
+	const article = await getArticleById(locals.supabase, params.id);
 	if (!article) throw error(404, 'Artikel tidak ditemukan');
 	return { article };
 };
@@ -25,7 +25,7 @@ export const actions: Actions = {
 		if (!title) return fail(400, { error: 'Judul wajib diisi.' });
 		if (!content.trim()) return fail(400, { error: 'Konten wajib diisi.' });
 
-		await updateArticle(params.id, { title, content, tags, coverImage, status });
+		await updateArticle(locals.supabase, params.id, { title, content, tags, coverImage, status });
 		throw redirect(303, `/admin/articles`);
 	}
 };

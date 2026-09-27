@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { renderMarkdownPreview } from '$lib/utils/markdown-client';
-	import { uploadArticleImage } from '$lib/firebase/storage';
+	import { uploadArticleImage } from '$lib/supabase/storage';
 
 	interface Props {
 		value: string;

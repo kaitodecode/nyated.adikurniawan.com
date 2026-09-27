@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { signInWithEmailAndPassword } from 'firebase/auth';
-	import { auth } from '$lib/firebase/client';
+	import { supabase } from '$lib/supabase/client';
 
 	let email = $state('');
 	let password = $state('');
@@ -15,19 +14,8 @@
 		loading = true;
 
 		try {
-			const credential = await signInWithEmailAndPassword(auth, email, password);
-			const idToken = await credential.user.getIdToken();
-
-			const res = await fetch('/api/auth/session', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ idToken })
-			});
-
-			if (!res.ok) {
-				const body = await res.json().catch(() => ({}));
-				throw new Error(body.error ?? 'Gagal masuk');
-			}
+			const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+			if (signInError) throw new Error(signInError.message);
 
 			const next = page.url.searchParams.get('next') ?? '/admin/dashboard';
 			await goto(next, { invalidateAll: true });

@@ -19,7 +19,11 @@ export const actions: Actions = {
 		if (!title) return fail(400, { error: 'Judul wajib diisi.' });
 		if (!content.trim()) return fail(400, { error: 'Konten wajib diisi.' });
 
-		const id = await createArticle({ title, content, tags, coverImage, status }, locals.user);
+		const id = await createArticle(
+			locals.supabase,
+			{ title, content, tags, coverImage, status },
+			{ id: locals.user.id, email: locals.user.email ?? null }
+		);
 		throw redirect(303, `/admin/articles/${id}`);
 	}
 };

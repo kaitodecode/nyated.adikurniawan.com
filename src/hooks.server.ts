@@ -1,21 +1,29 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
-import { SESSION_COOKIE_NAME } from '$lib/server/auth';
+import { createSupabaseServerClient } from '$lib/server/supabase';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.user = null;
+	event.locals.supabase = createSupabaseServerClient(event);
 
-	const sessionCookie = event.cookies.get(SESSION_COOKIE_NAME);
+	event.locals.safeGetSession = async () => {
+		const {
+			data: { session }
+		} = await event.locals.supabase.auth.getSession();
+		if (!session) return { session: null, user: null };
 
-	if (sessionCookie) {
-		try {
-			const { adminAuth } = await import('$lib/server/firebase-admin');
-			const decoded = await adminAuth.verifySessionCookie(sessionCookie, true);
-			event.locals.user = { uid: decoded.uid, email: decoded.email ?? null };
-		} catch {
-			event.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
-		}
-	}
+		// Validate the JWT against Supabase Auth rather than trusting the cookie payload.
+		const {
+			data: { user },
+			error
+		} = await event.locals.supabase.auth.getUser();
+		if (error) return { session: null, user: null };
+
+		return { session, user };
+	};
+
+	const { session, user } = await event.locals.safeGetSession();
+	event.locals.session = session;
+	event.locals.user = user;
 
 	const isAdminRoute = event.url.pathname.startsWith('/admin');
 	const isLoginRoute = event.url.pathname === '/admin/login';
@@ -28,5 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		throw redirect(303, '/admin/dashboard');
 	}
 
-	return resolve(event);
+	return resolve(event, {
+		filterSerializedResponseHeaders: (name) => name === 'content-range' || name === 'x-supabase-api-version'
+	});
 };
