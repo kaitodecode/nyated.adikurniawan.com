@@ -1,4 +1,7 @@
 <script lang="ts">
+	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+
 	interface Props {
 		page: number;
 		totalPages: number;
@@ -16,24 +19,19 @@
 			href={buildHref(Math.max(1, page - 1))}
 			aria-disabled={page === 1}
 			aria-label="Sebelumnya"
-			class="inline-flex size-9 items-center justify-center rounded-md border border-ink-900/10 text-ink-700 hover:bg-ink-900/5 aria-disabled:pointer-events-none aria-disabled:opacity-40 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/10"
+			class="inline-flex size-9 items-center justify-center rounded-lg border border-ink-900/10 text-ink-600 hover:bg-ink-900/5 aria-disabled:pointer-events-none aria-disabled:opacity-40 dark:border-white/10 dark:text-ink-200 dark:hover:bg-white/10"
 		>
-			<svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
-				<path
-					fill-rule="evenodd"
-					d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-					clip-rule="evenodd"
-				/>
-			</svg>
+			<ChevronLeft class="size-4" />
 		</a>
 
 		<div class="flex gap-1 text-sm">
 			{#each pages as p (p)}
 				<a
 					href={buildHref(p)}
-					class="inline-flex size-9 items-center justify-center rounded-md transition-colors {p === page
-						? 'bg-ink-950 text-white dark:bg-white dark:text-ink-950'
-						: 'text-ink-700 hover:bg-ink-900/5 dark:text-white/70 dark:hover:bg-white/10'}"
+					class="inline-flex size-9 items-center justify-center rounded-lg transition-colors {p ===
+					page
+						? 'bg-accent text-white'
+						: 'text-ink-600 hover:bg-ink-900/5 dark:text-ink-200 dark:hover:bg-white/10'}"
 				>
 					{p}
 				</a>
@@ -44,15 +42,9 @@
 			href={buildHref(Math.min(totalPages, page + 1))}
 			aria-disabled={page === totalPages}
 			aria-label="Selanjutnya"
-			class="inline-flex size-9 items-center justify-center rounded-md border border-ink-900/10 text-ink-700 hover:bg-ink-900/5 aria-disabled:pointer-events-none aria-disabled:opacity-40 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/10"
+			class="inline-flex size-9 items-center justify-center rounded-lg border border-ink-900/10 text-ink-600 hover:bg-ink-900/5 aria-disabled:pointer-events-none aria-disabled:opacity-40 dark:border-white/10 dark:text-ink-200 dark:hover:bg-white/10"
 		>
-			<svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
-				<path
-					fill-rule="evenodd"
-					d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-					clip-rule="evenodd"
-				/>
-			</svg>
+			<ChevronRight class="size-4" />
 		</a>
 	</nav>
 {/if}

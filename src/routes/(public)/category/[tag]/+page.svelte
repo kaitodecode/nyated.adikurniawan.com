@@ -12,13 +12,13 @@
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-	<p class="mb-1 text-sm text-ink-500 dark:text-white/50">Kategori</p>
-	<h1 class="mb-8 text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl dark:text-white">
+	<p class="mb-1 text-sm text-ink-500 dark:text-ink-400">Kategori</p>
+	<h1 class="mb-8 text-2xl font-bold tracking-tighter-heading text-ink-950 sm:text-3xl dark:text-white">
 		{data.tag}
 	</h1>
 
 	{#if data.items.length === 0}
-		<p class="text-ink-500 dark:text-white/50">Belum ada artikel untuk kategori ini.</p>
+		<p class="text-ink-500 dark:text-ink-400">Belum ada artikel untuk kategori ini.</p>
 	{:else}
 		<div class="grid gap-x-8 gap-y-10 sm:grid-cols-2">
 			{#each data.items as article (article.id)}

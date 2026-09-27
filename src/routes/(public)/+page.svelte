@@ -20,12 +20,14 @@
 <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
 	<div class="grid gap-10 lg:grid-cols-[1fr_260px]">
 		<div>
-			<h1 class="mb-8 text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl dark:text-white">
+			<h1
+				class="mb-8 text-2xl font-bold tracking-tighter-heading text-ink-950 sm:text-3xl dark:text-white"
+			>
 				Artikel terbaru
 			</h1>
 
 			{#if data.items.length === 0}
-				<p class="text-ink-500 dark:text-white/50">Belum ada artikel yang dipublikasikan.</p>
+				<p class="text-ink-500 dark:text-ink-400">Belum ada artikel yang dipublikasikan.</p>
 			{:else}
 				<div class="grid gap-x-8 gap-y-10 sm:grid-cols-2">
 					{#each data.items as article (article.id)}
@@ -42,7 +44,7 @@
 		</div>
 
 		<aside class="hidden lg:block">
-			<div class="sticky top-6">
+			<div class="sticky top-20">
 				<AdSlot layout="sidebar" />
 			</div>
 		</aside>

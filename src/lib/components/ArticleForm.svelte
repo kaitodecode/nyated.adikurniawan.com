@@ -4,9 +4,11 @@
 	import { uploadArticleImage } from '$lib/supabase/storage';
 	import type { ArticleStatus } from '$lib/types/article';
 	import Input from '$lib/components/ui/Input.svelte';
+	import Select from '$lib/components/ui/Select.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import Alert from '$lib/components/ui/Alert.svelte';
+	import Upload from '@lucide/svelte/icons/upload';
 
 	interface Props {
 		initial?: {
@@ -75,34 +77,30 @@
 			<Input name="title" bind:value={title} required class="text-lg font-medium" label="Judul" />
 
 			<div>
-				<span class="mb-1 block text-sm text-ink-700 dark:text-white/70">Konten (Markdown)</span>
+				<span class="mb-1 block text-sm text-ink-600 dark:text-ink-200">Konten (Markdown)</span>
 				<input type="hidden" name="content" value={content} />
 				<MarkdownEditor value={content} onchange={(v) => (content = v)} />
 			</div>
 		</div>
 
 		<aside class="space-y-5">
-			<Card class="p-4">
-				<span class="mb-2 block text-sm font-medium text-ink-700 dark:text-white/70">Status</span>
-				<select
-					name="status"
-					bind:value={status}
-					class="w-full rounded-md border border-ink-900/15 bg-white px-3 py-2 text-sm text-ink-900 dark:border-white/15 dark:bg-ink-900 dark:text-white"
-				>
+			<Card padding="sm">
+				<Select name="status" bind:value={status} label="Status">
 					<option value="draft">Draft</option>
 					<option value="published">Published</option>
-				</select>
+				</Select>
 			</Card>
 
-			<Card class="p-4">
-				<span class="mb-2 block text-sm font-medium text-ink-700 dark:text-white/70">Cover image</span>
+			<Card padding="sm">
+				<span class="mb-2 block text-sm font-medium text-ink-600 dark:text-ink-200">Cover image</span>
 				<input type="hidden" name="coverImage" value={coverImage ?? ''} />
 				{#if coverImage}
-					<img src={coverImage} alt="Cover" class="mb-2 aspect-video w-full rounded-md object-cover" />
+					<img src={coverImage} alt="Cover" class="mb-2 aspect-video w-full rounded-lg object-cover" />
 				{/if}
 				<label
-					class="block w-full cursor-pointer rounded-md border border-ink-900/15 px-3 py-1.5 text-center text-xs text-ink-700 hover:bg-ink-900/5 dark:border-white/15 dark:text-white/70 dark:hover:bg-white/10"
+					class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-ink-900/15 px-3 py-1.5 text-center text-xs text-ink-600 hover:bg-ink-900/5 dark:border-white/15 dark:text-ink-200 dark:hover:bg-white/10"
 				>
+					<Upload class="size-3.5" />
 					{coverUploading ? 'Mengunggah…' : coverImage ? 'Ganti gambar' : 'Unggah gambar'}
 					<input
 						type="file"
@@ -113,11 +111,11 @@
 					/>
 				</label>
 				{#if coverError}
-					<p class="mt-1 text-xs text-red-600 dark:text-red-400">{coverError}</p>
+					<p class="mt-1 text-xs text-danger">{coverError}</p>
 				{/if}
 			</Card>
 
-			<Card class="p-4">
+			<Card padding="sm">
 				<Input
 					name="tags"
 					bind:value={tagsInput}

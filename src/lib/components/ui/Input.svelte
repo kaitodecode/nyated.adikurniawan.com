@@ -20,19 +20,19 @@
 
 <label class="block text-sm">
 	{#if label}
-		<span class="mb-1 block text-ink-700 dark:text-white/70">{label}</span>
+		<span class="mb-1.5 block text-ink-600 dark:text-ink-200">{label}</span>
 	{/if}
 	<input
 		bind:value
-		class="w-full rounded-md border bg-white px-3 py-2 text-ink-900 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30 dark:bg-ink-900 dark:text-white {error
-			? 'border-red-400 dark:border-red-500'
+		class="w-full rounded-lg border bg-white px-3 py-2 text-ink-900 outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/20 dark:bg-ink-900 dark:text-white {error
+			? 'border-danger focus:border-danger focus:ring-danger/20'
 			: 'border-ink-900/15 dark:border-white/15'} {className}"
 		{...rest}
 	/>
 	{#if hint && !error}
-		<span class="mt-1 block text-xs text-ink-500 dark:text-white/50">{hint}</span>
+		<span class="mt-1 block text-xs text-ink-500 dark:text-ink-400">{hint}</span>
 	{/if}
 	{#if error}
-		<span class="mt-1 block text-xs text-red-600 dark:text-red-400">{error}</span>
+		<span class="mt-1 block text-xs text-danger">{error}</span>
 	{/if}
 </label>

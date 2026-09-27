@@ -9,7 +9,7 @@
 	<title>Edit: {data.article.title} — Admin</title>
 </svelte:head>
 
-<h1 class="mb-6 text-xl font-semibold text-ink-950 dark:text-white">Edit artikel</h1>
+<h1 class="mb-6 text-xl font-semibold tracking-tight text-ink-950 dark:text-white">Edit artikel</h1>
 
 <ArticleForm
 	initial={{

@@ -30,7 +30,7 @@
 {#if enabled}
 	<div class="ad-slot ad-slot--{layout} {className}" aria-label="Iklan">
 		<span
-			class="mb-1 block text-center text-[10px] uppercase tracking-widest text-ink-500 dark:text-white/40"
+			class="mb-1 block text-center text-[10px] tracking-widest text-ink-500 uppercase dark:text-ink-400"
 		>
 			Iklan
 		</span>
@@ -46,7 +46,7 @@
 {:else}
 	<!-- AdSense belum dikonfigurasi: isi PUBLIC_ADSENSE_CLIENT_ID pada .env untuk mengaktifkan slot ini -->
 	<div
-		class="ad-slot ad-slot--{layout} {className} flex items-center justify-center rounded-lg border border-dashed border-ink-500/30 bg-ink-500/5 p-6 text-xs text-ink-500 dark:border-white/20 dark:bg-white/5 dark:text-white/40"
+		class="ad-slot ad-slot--{layout} {className} rounded-lg border border-dashed border-ink-500/30 bg-ink-500/5 p-6 text-xs text-ink-500 dark:border-white/20 dark:bg-white/5 dark:text-ink-400"
 	>
 		Ad placeholder ({layout})
 	</div>
