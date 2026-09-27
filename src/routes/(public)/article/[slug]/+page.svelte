@@ -2,6 +2,7 @@
 	import ArticleContent from '$lib/components/ArticleContent.svelte';
 	import ArticleCard from '$lib/components/ArticleCard.svelte';
 	import AdSlot from '$lib/components/AdSlot.svelte';
+	import Badge from '$lib/components/ui/Badge.svelte';
 	import { page } from '$app/state';
 	import type { PageData } from './$types';
 
@@ -40,10 +41,10 @@
 	<div class="grid gap-10 lg:grid-cols-[1fr_260px]">
 		<div class="min-w-0">
 			<header class="mb-8">
-				<h1 class="text-3xl font-bold leading-tight tracking-tight text-ink-950 sm:text-4xl">
+				<h1 class="text-3xl font-bold leading-tight tracking-tight text-ink-950 sm:text-4xl dark:text-white">
 					{article.title}
 				</h1>
-				<div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500">
+				<div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500 dark:text-white/50">
 					<span>{article.authorName}</span>
 					<span aria-hidden="true">&middot;</span>
 					<time datetime={new Date(article.publishedAt ?? article.createdAt).toISOString()}>
@@ -55,19 +56,14 @@
 				{#if article.tags.length}
 					<div class="mt-3 flex flex-wrap gap-1.5">
 						{#each article.tags as tag (tag)}
-							<a
-								href={`/category/${tag}`}
-								class="rounded-full bg-ink-900/5 px-2.5 py-1 text-xs text-ink-700 hover:bg-ink-900/10"
-							>
-								{tag}
-							</a>
+							<Badge href={`/category/${tag}`}>{tag}</Badge>
 						{/each}
 					</div>
 				{/if}
 			</header>
 
 			{#if article.coverImage}
-				<div class="mb-8 overflow-hidden rounded-xl bg-ink-900/5">
+				<div class="mb-8 overflow-hidden rounded-xl bg-ink-900/5 dark:bg-white/5">
 					<img src={article.coverImage} alt={article.title} class="w-full object-cover" />
 				</div>
 			{/if}
@@ -79,8 +75,8 @@
 			</div>
 
 			{#if data.related.length}
-				<section class="mt-14 border-t border-ink-900/10 pt-8">
-					<h2 class="mb-6 text-lg font-semibold text-ink-950">Artikel terkait</h2>
+				<section class="mt-14 border-t border-ink-900/10 pt-8 dark:border-white/10">
+					<h2 class="mb-6 text-lg font-semibold text-ink-950 dark:text-white">Artikel terkait</h2>
 					<div class="grid gap-x-8 gap-y-8 sm:grid-cols-2">
 						{#each data.related as related (related.id)}
 							<ArticleCard article={related} />

@@ -2,6 +2,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { supabase } from '$lib/supabase/client';
+	import Input from '$lib/components/ui/Input.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Alert from '$lib/components/ui/Alert.svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -31,44 +34,28 @@
 	<title>Admin Login — nyated.</title>
 </svelte:head>
 
-<div class="flex min-h-screen items-center justify-center bg-paper px-4">
+<div class="flex min-h-screen items-center justify-center bg-paper px-4 dark:bg-ink-950">
 	<form
 		onsubmit={handleSubmit}
-		class="w-full max-w-sm rounded-xl border border-ink-900/10 bg-white p-8 shadow-sm"
+		class="w-full max-w-sm rounded-xl border border-ink-900/10 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-ink-900"
 	>
-		<h1 class="mb-1 text-xl font-semibold text-ink-950">Admin Login</h1>
-		<p class="mb-6 text-sm text-ink-500">Masuk untuk mengelola artikel.</p>
+		<h1 class="mb-1 text-xl font-semibold text-ink-950 dark:text-white">Admin Login</h1>
+		<p class="mb-6 text-sm text-ink-500 dark:text-white/50">Masuk untuk mengelola artikel.</p>
 
 		{#if error}
-			<p class="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+			<Alert tone="error" class="mb-4">{error}</Alert>
 		{/if}
 
-		<label class="mb-3 block text-sm">
-			<span class="mb-1 block text-ink-700">Email</span>
-			<input
-				type="email"
-				bind:value={email}
-				required
-				class="w-full rounded-md border border-ink-900/15 px-3 py-2 outline-none focus:border-accent"
-			/>
-		</label>
+		<div class="mb-3">
+			<Input type="email" label="Email" bind:value={email} required />
+		</div>
 
-		<label class="mb-6 block text-sm">
-			<span class="mb-1 block text-ink-700">Password</span>
-			<input
-				type="password"
-				bind:value={password}
-				required
-				class="w-full rounded-md border border-ink-900/15 px-3 py-2 outline-none focus:border-accent"
-			/>
-		</label>
+		<div class="mb-6">
+			<Input type="password" label="Password" bind:value={password} required />
+		</div>
 
-		<button
-			type="submit"
-			disabled={loading}
-			class="w-full rounded-md bg-ink-950 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-		>
+		<Button type="submit" disabled={loading} class="w-full">
 			{loading ? 'Memproses…' : 'Masuk'}
-		</button>
+		</Button>
 	</form>
 </div>

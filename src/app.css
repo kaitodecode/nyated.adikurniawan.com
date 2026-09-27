@@ -25,6 +25,13 @@
 	::selection {
 		background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
 	}
+
+	@media (prefers-color-scheme: dark) {
+		body {
+			background-color: var(--color-ink-950);
+			color: var(--color-paper);
+		}
+	}
 }
 
 @layer utilities {

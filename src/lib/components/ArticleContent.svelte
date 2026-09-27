@@ -23,7 +23,9 @@
 	let blocks = $derived(splitBlocks(html));
 </script>
 
-<div class="prose prose-article prose-neutral max-w-none prose-headings:font-semibold prose-a:text-accent">
+<div
+	class="prose prose-article prose-neutral max-w-none prose-headings:font-semibold prose-a:text-accent dark:prose-invert"
+>
 	{#each blocks as block, i (i)}
 		{@html block}
 		{#if i === insertAdAfterBlock - 1 && blocks.length > insertAdAfterBlock}
