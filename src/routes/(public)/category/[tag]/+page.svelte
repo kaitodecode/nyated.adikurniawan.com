@@ -12,7 +12,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-	<p class="mb-1 text-sm text-ink-500 dark:text-ink-400">Kategori</p>
+	<p class="kicker mb-2">Kategori</p>
 	<h1 class="mb-8 text-2xl font-bold tracking-tighter-heading text-ink-950 sm:text-3xl dark:text-white">
 		{data.tag}
 	</h1>

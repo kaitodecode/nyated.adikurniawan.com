@@ -75,6 +75,15 @@
 		letter-spacing: -0.03em;
 	}
 
+	.kicker {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-accent);
+	}
+
 	.ad-slot {
 		display: flex;
 		flex-direction: column;
