@@ -2,6 +2,7 @@
 	import ArticleContent from '$lib/components/ArticleContent.svelte';
 	import ArticleCard from '$lib/components/ArticleCard.svelte';
 	import AdSlot from '$lib/components/AdSlot.svelte';
+	import CategoryListCard from '$lib/components/CategoryListCard.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
 	import { page } from '$app/state';
 	import type { PageData } from './$types';
@@ -97,7 +98,8 @@
 		</div>
 
 		<aside class="hidden lg:block">
-			<div class="sticky top-20">
+			<div class="sticky top-20 space-y-6">
+				<CategoryListCard tags={data.tags} />
 				<AdSlot layout="sidebar" />
 			</div>
 		</aside>

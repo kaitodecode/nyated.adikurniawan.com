@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
 	import ArticleCard from '$lib/components/ArticleCard.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import AdSlot from '$lib/components/AdSlot.svelte';
+	import CategoryListCard from '$lib/components/CategoryListCard.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -45,6 +47,7 @@
 				{#if featured}
 					<a
 						href={`/article/${featured.slug}`}
+						in:fly={{ y: 10, duration: 300 }}
 						class="group mb-10 grid gap-5 overflow-hidden rounded-xl border border-ink-900/10 bg-white transition-all hover:-translate-y-0.5 hover:border-ink-900/20 hover:shadow-[0_8px_24px_-12px_rgba(15,17,21,0.18)] sm:grid-cols-[1.1fr_1fr] dark:border-white/10 dark:bg-ink-900 dark:hover:border-white/20"
 					>
 						{#if featured.coverImage}
@@ -77,8 +80,10 @@
 				{/if}
 
 				<div class="grid gap-x-8 gap-y-10 sm:grid-cols-2">
-					{#each rest as article (article.id)}
-						<ArticleCard {article} />
+					{#each rest as article, i (article.id)}
+						<div in:fly={{ y: 10, duration: 250, delay: Math.min(i, 4) * 40 }}>
+							<ArticleCard {article} />
+						</div>
 					{/each}
 				</div>
 			{/if}
@@ -91,7 +96,8 @@
 		</div>
 
 		<aside class="hidden lg:block">
-			<div class="sticky top-20">
+			<div class="sticky top-20 space-y-6">
+				<CategoryListCard tags={data.tags} />
 				<AdSlot layout="sidebar" />
 			</div>
 		</aside>

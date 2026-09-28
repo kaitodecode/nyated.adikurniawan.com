@@ -20,8 +20,8 @@
 	--color-ink-100: #eceef1;
 	--color-paper: #fafaf9;
 
-	--color-accent: #4338ca;
-	--color-accent-dark: #6366f1;
+	--color-accent: #0f6b52;
+	--color-accent-dark: #2fa578;
 	--color-accent-muted: color-mix(in srgb, var(--color-accent) 10%, transparent);
 
 	--color-success: #15803d;

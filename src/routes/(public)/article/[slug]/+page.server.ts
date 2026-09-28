@@ -1,6 +1,11 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getArticleBySlug, getRelatedArticles, incrementArticleViews } from '$lib/server/articles';
+import {
+	getArticleBySlug,
+	getRelatedArticles,
+	incrementArticleViews,
+	getAllTags
+} from '$lib/server/articles';
 import { renderMarkdown } from '$lib/utils/markdown';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -15,11 +20,15 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		console.error('Failed to record view', err)
 	);
 
-	const related = await getRelatedArticles(locals.supabase, article);
+	const [related, tags] = await Promise.all([
+		getRelatedArticles(locals.supabase, article),
+		getAllTags(locals.supabase)
+	]);
 
 	return {
 		article,
 		html: renderMarkdown(article.content),
-		related
+		related,
+		tags
 	};
 };
