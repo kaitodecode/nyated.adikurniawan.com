@@ -8,6 +8,9 @@
 
 	let { data }: { data: PageData } = $props();
 	let article = $derived(data.article);
+	let readingMinutes = $derived(
+		Math.max(1, Math.round(article.content.trim().split(/\s+/).filter(Boolean).length / 200))
+	);
 
 	function formatDate(ms: number | null) {
 		if (!ms) return '';
@@ -41,6 +44,7 @@
 	<div class="grid gap-10 lg:grid-cols-[1fr_260px]">
 		<div class="min-w-0">
 			<header class="mb-8">
+				<p class="kicker mb-2">Artikel</p>
 				<h1
 					class="text-3xl leading-tight font-bold tracking-tighter-heading text-ink-950 sm:text-4xl dark:text-white"
 				>
@@ -52,6 +56,8 @@
 					<time datetime={new Date(article.publishedAt ?? article.createdAt).toISOString()}>
 						{formatDate(article.publishedAt ?? article.createdAt)}
 					</time>
+					<span aria-hidden="true">&middot;</span>
+					<span>{readingMinutes} menit baca</span>
 					<span aria-hidden="true">&middot;</span>
 					<span>{article.views} views</span>
 				</div>

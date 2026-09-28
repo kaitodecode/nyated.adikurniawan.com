@@ -11,6 +11,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+	<p class="kicker mb-2">Jelajahi</p>
 	<h1 class="mb-8 text-2xl font-bold tracking-tighter-heading text-ink-950 sm:text-3xl dark:text-white">
 		Kategori
 	</h1>
